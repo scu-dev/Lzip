@@ -7,19 +7,16 @@
 #include <string>
 #include <vector>
 
-#include "debug.hpp"
-#include "error.hpp"
-#include "file.hpp"
 #include "huffman.hpp"
-#include "int.hpp"
 #include "meta.hpp"
+#include "utils.hpp"
 
 namespace Lzip {
     typedef uint8_t u8;
     typedef uint16_t u16;
     typedef uint32_t u32;
     typedef uint64_t u64;
-    using std::array, std::cout, std::fixed, std::setprecision, std::to_string, std::string, std::vector, std::span, std::filesystem::path, std::chrono::steady_clock, std::chrono::duration_cast, std::chrono::milliseconds, File::FileReader, File::FileWriter, File::normalize, File::IO_CHUNK_SIZE, Huffman::HuffmanCode, Huffman::updateFrequency, Huffman::getHuffmanCode;
+    using std::array, std::cout, std::cin, std::fixed, std::setprecision, std::to_string, std::string, std::vector, std::span, std::filesystem::path, std::chrono::steady_clock, std::chrono::duration_cast, std::chrono::milliseconds, Util::FileReader, Util::FileWriter, Util::normalize, Util::IO_CHUNK_SIZE, Util::printCodes, Huffman::HuffmanCode, Huffman::updateFrequency, Huffman::getHuffmanCode;
     inline void compress(vector<u8>& result, span<const u8> input, const array<HuffmanCode, 256>& huffmanCodes, u8& previousOffset) noexcept;
 
     [[nodiscard]] inline bool compressFile(const string& inputFile, const string& outputFile) noexcept {
@@ -33,6 +30,15 @@ namespace Lzip {
         if (!normalize(outputPath)) {
             Util::setError(string("输出文件路径有误：") + outputFile);
             return false;
+        }
+        if (exists(outputPath) && is_regular_file(outputPath)) {
+            cout << "输出文件 \"" << STR(outputPath) << "\" 已存在，是否覆盖？(y/n)：";
+            string input;
+            cin >> input;
+            if (input != "y" && input != "Y") {
+                cout << "操作已取消。\n";
+                return true;
+            }
         }
         FileReader reader(inputPath);
         if (!reader.file.is_open()) {
@@ -66,7 +72,7 @@ namespace Lzip {
             Util::setError("无法生成霍夫曼树。");
             return false;
         }
-        Debug::printCodes(huffmanCodes);
+        printCodes(huffmanCodes);
         inputData_header.insert(inputData_header.end(), LZIP_MAGIC.begin(), LZIP_MAGIC.end());
         Util::writeIntLE(inputData_header, LZIP_VERSION);
         Util::writeIntLE(inputData_header, static_cast<u64>(reader.fileSize));

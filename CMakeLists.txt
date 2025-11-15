@@ -48,6 +48,6 @@ add_executable(${PROJECT_NAME} ${CTE_SOURCES})
 
 #------------Inclusions------------
 target_include_directories(${PROJECT_NAME} PRIVATE
-    "libs/CLI11/include"
+    "libs/cli11/include"
 )
 #----------------------------------

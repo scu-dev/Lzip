@@ -7,20 +7,17 @@
 #include <string>
 #include <vector>
 
-#include "error.hpp"
-#include "file.hpp"
 #include "huffman.hpp"
-#include "int.hpp"
 #include "meta.hpp"
+#include "utils.hpp"
 
 namespace Lzip {
     typedef uint8_t u8;
     typedef uint16_t u16;
     typedef uint64_t u64;
-    using std::array, std::cout, std::cin, std::fixed, std::setprecision, std::to_string, std::string, std::vector, std::span, std::filesystem::path, std::filesystem::exists, std::filesystem::is_regular_file, std::chrono::steady_clock, std::chrono::duration_cast, std::chrono::milliseconds, File::FileReader, File::FileWriter, File::normalize, File::IO_CHUNK_SIZE, Huffman::deserialize, Huffman::IndexedNodeR, Huffman::getCodeMap;
+    using std::array, std::cout, std::cin, std::fixed, std::setprecision, std::to_string, std::string, std::vector, std::span, std::filesystem::path, std::filesystem::exists, std::filesystem::is_regular_file, std::chrono::steady_clock, std::chrono::duration_cast, std::chrono::milliseconds, Util::FileReader, Util::FileWriter, Util::normalize, Util::IO_CHUNK_SIZE, Util::printCodes, Huffman::deserialize, Huffman::IndexedNodeR, Huffman::HuffmanCode, Huffman::getCodeMap;
     inline void decompress(span<const u8> data, const vector<IndexedNodeR>& tree, vector<u8>& result, u64& writtenBytes, u16& currentNode, u64 maxBytes) noexcept;
 
-    #define STR(p) reinterpret_cast<const char*>(p.u8string().c_str())
     inline constexpr const char* INVALID_LZIP_FILE_ERROR = "输入文件不是有效的 Lzip 文件。";
     [[nodiscard]] inline bool decompressFile(const string& inputFile, const string& outputFile) noexcept {
         steady_clock::time_point startTime = steady_clock::now();
@@ -86,7 +83,7 @@ namespace Lzip {
         static array<HuffmanCode, 256> codeMap;
         codeMap.fill({});
         getCodeMap(huffmanTree, codeMap);
-        Debug::printCodes(codeMap);
+        printCodes(codeMap);
         vector<u8> inputData, outputData;
         u64 length = reader.nextChunk(inputData, IO_CHUNK_SIZE), ax = 0, writtenBytes = 0;
         u16 currentNode = 0;

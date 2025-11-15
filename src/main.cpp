@@ -5,26 +5,25 @@
 
 #include "compress.hpp"
 #include "decompress.hpp"
-#include "error.hpp"
 #include "meta.hpp"
-#include "platform.hpp"
+#include "utils.hpp"
 
 int main(int argc, char** argv) {
     using std::string, std::cout, std::cerr, std::endl, CLI::App, CLI::CallForAllHelp, CLI::CallForHelp, CLI::CallForVersion, CLI::ParseError;
+
     #if _LZIP_WINDOWS
         SetConsoleCP(CP_UTF8);
         SetConsoleOutputCP(CP_UTF8);
     #endif
-
     App app;
-    app.name(LZIP_APP_NAME);
+    app.name(Lzip::LZIP_APP_NAME);
     app.allow_windows_style_options(false);
     app.allow_config_extras(false);
     app.set_help_all_flag("");
     app.set_help_flag("-h,--help", "输出这条帮助信息并退出。");
-    app.set_version_flag("-v, --version", LZIP_SEMATIC_VERSION, "显示版本信息并退出。");
+    app.set_version_flag("-v, --version", Lzip::LZIP_SEMATIC_VERSION, "显示版本信息并退出。");
     app.set_config("");
-    app.footer(LZIP_COPYRIGHT_NOTICE);
+    app.footer(Lzip::LZIP_COPYRIGHT_NOTICE);
     {
         string inputFile, outputFile;
         auto* add = app.add_subcommand("c", "压缩文件操作");
@@ -55,7 +54,7 @@ int main(int argc, char** argv) {
         exit(0);
     }
     catch (const CallForVersion& e) {
-        cout << LZIP_SEMATIC_VERSION << endl;
+        cout << Lzip::LZIP_SEMATIC_VERSION << endl;
         exit(0);
     }
     catch (const ParseError& e) {
