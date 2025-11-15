@@ -37,7 +37,6 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 #----------------------------------
 
-
 #--------------Files---------------
 file(GLOB_RECURSE CTE_SOURCES CMAKE_CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.cpp")
 #----------------------------------
