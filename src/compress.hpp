@@ -68,7 +68,7 @@ namespace Lzip {
         static array<HuffmanCode, 256> huffmanCodes;
         huffmanCodes.fill({});
         u16 presentedByteCount;
-        if (!getHuffmanCode(frequencies, huffmanCodes, presentedByteCount, 24)) {
+        if (!getHuffmanCode(frequencies, huffmanCodes, presentedByteCount)) {
             Util::setError("无法生成霍夫曼树。");
             return false;
         }

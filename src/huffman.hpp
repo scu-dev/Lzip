@@ -71,8 +71,8 @@ namespace Lzip::Huffman {
         for (u64 i = 0; i < data.size(); i++) frequencies[data[i]]++;
     }
 
-    [[nodiscard]] inline bool getHuffmanCode(const array<u64, 256>& frequencies, array<HuffmanCode, 256>& result, u16& presentedByteCount, u16 maxCodeLen = 24) noexcept {
-        if (maxCodeLen > 64) return false;
+    inline constexpr u16 MAX_CODE_LEN = 24;
+    [[nodiscard]] inline bool getHuffmanCode(const array<u64, 256>& frequencies, array<HuffmanCode, 256>& result, u16& presentedByteCount) noexcept {
         result.fill({});
         static array<ByteFrequency, 256> byteFrequencies{};
         presentedByteCount = 0;
@@ -139,8 +139,8 @@ namespace Lzip::Huffman {
             }
         }
         //Reduce lengths
-        if (actualMaxCodeLen > maxCodeLen) {
-            for (u16 i = actualMaxCodeLen; i > maxCodeLen; i--) while (codeLenCounts[i] > 0) {
+        if (actualMaxCodeLen > MAX_CODE_LEN) {
+            for (u16 i = actualMaxCodeLen; i > MAX_CODE_LEN; i--) while (codeLenCounts[i] > 0) {
                 //Move two codes from length len to one code of length len - 1
                 if (codeLenCounts[i] < 2) return false;
                 codeLenCounts[i] -= 2;
@@ -151,7 +151,7 @@ namespace Lzip::Huffman {
                 codeLenCounts[shallowLeafCodeLen]--;
                 codeLenCounts[static_cast<size_t>(shallowLeafCodeLen) + 1] += 2;
             }
-            actualMaxCodeLen = maxCodeLen;
+            actualMaxCodeLen = MAX_CODE_LEN;
             //We might end up with less than maxCodeLength after reduction, so adjust actualMaxCodeLength
             while (codeLenCounts[actualMaxCodeLen] == 0 && actualMaxCodeLen > 0) actualMaxCodeLen--;
         }
