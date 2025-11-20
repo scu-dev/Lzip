@@ -56,7 +56,7 @@ namespace Lzip {
             Util::setError(string("无法打开输出文件：") + STR(outputPath));
             return false;
         }
-        if (reader.fileSize < 270) {
+        if (reader.fileSize < 272) {
             Util::setError(INVALID_LZIP_FILE_ERROR);
             return false;
         }
